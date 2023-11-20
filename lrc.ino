@@ -51,6 +51,8 @@ void setup() {
   lcd.init();
   lcd.backlight();
   updateLCD();
+  isRunning(0, false);
+  isRunning(1, false);
 }
 
 void updateLCD() {
@@ -80,29 +82,43 @@ void toggle() {
   }
 }
 
+void isRunning(int index, bool status) {
+    lcd.setCursor(15, index);
+    if (status == true) { 
+        lcd.print("V");
+    } else { lcd.print(" "); 
+  }
+}
+
 void start() {
   if (CH1_counter == -1) {
     digitalWrite(PW_SWITCH_CH1, LOW);
+    isRunning(0, true);
   }
   if (CH2_counter == -1) {
     digitalWrite(PW_SWITCH_CH2, LOW);
+    isRunning(1, true);
   }
   if (CH1_counter == 0) {
     digitalWrite(PW_SWITCH_CH1, HIGH);
+    isRunning(0, false);
   }
   if (CH2_counter == 0) {
     digitalWrite(PW_SWITCH_CH2, HIGH);
+    isRunning(1, false);
   }
 
   if (CH1_counter > 0) {
     digitalWrite(PW_SWITCH_CH1, LOW);
     CH1Timer.reset();
     CH1Timer.setInterval(CH1_counter * 1000);
+    isRunning(0, true);
   }
   if (CH2_counter > 0) {
     digitalWrite(PW_SWITCH_CH2, LOW);
     CH2Timer.reset();
     CH2Timer.setInterval(CH2_counter * 1000);
+    isRunning(1, true);
   }
 }
 
@@ -147,6 +163,7 @@ toggle();
       if (CH1Timer.isReady() && !CH1) {
         if ((CH1_counter != -1) && (CH1_counter != 0)) {
           digitalWrite(PW_SWITCH_CH1, HIGH);
+          isRunning(0, false);
           CH1 = false;
         }
       }
@@ -154,6 +171,7 @@ toggle();
       if (CH2Timer.isReady() && !CH2) {
         if ((CH2_counter != -1) && (CH2_counter != 0)) {
           digitalWrite(PW_SWITCH_CH2, HIGH);
+          isRunning(1, false);
           CH2 = false;
         }
       } 
